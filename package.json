@@ -1,0 +1,22 @@
+{
+  "name": "template-engine",
+  "version": "1.0.0",
+  "description": "A simple, extensible template engine for Node.js in 100 lines (or less)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/McDuckes/node-template-engine.git"
+  },
+  "author": "McDuckes / Robert Gudat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/McDuckes/node-template-engine/issues"
+  },
+  "homepage": "https://github.com/McDuckes/node-template-engine#readme",
+  "devDependencies": {
+    "@types/node": "^18.7.6"
+  }
+}
