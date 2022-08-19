@@ -35,7 +35,7 @@ And then add the handling of the tag to the compile function:
 ```javascript
 parsed.map(t => {
             if (t.startsWith("YOURTAG") && t.endsWith("YOURTAG")) {
-                renderFunction += `+${t.substring(7, t.length - 7)}`; //Or something else
+                renderFunction += `+${t.substring(7, t.length - 7)}`; //Cut of tags and add as executable code
             } else ...
 ```
 
