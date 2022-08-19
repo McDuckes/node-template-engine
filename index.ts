@@ -40,7 +40,7 @@ export default class Templater {
 
         while (true) {
             //Expand here with your custom tags
-            let result = /{{(.*?)}}|YOURTAG(.*?)YOURTAG/g.exec(templateString);
+            let result = /{{(.*?)}}/g.exec(templateString);
             if (!result) break;
 
             if (result.index !== 0) {
