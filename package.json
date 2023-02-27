@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/McDuckes/node-template-engine.git"
+    "url": "git@github.com:gudatr/node-template-engine.git"
   },
-  "author": "McDuckes / Robert Gudat",
+  "author": "gudatr / Robert Gudat",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/McDuckes/node-template-engine/issues"
+    "url": "https://github.com/gudatr/node-template-engine/issues"
   },
-  "homepage": "https://github.com/McDuckes/node-template-engine#readme",
+  "homepage": "https://github.com/gudatr/node-template-engine#readme",
   "devDependencies": {
     "@types/node": "^18.14.2"
   }
