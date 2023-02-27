@@ -2,7 +2,8 @@
   "name": "template-engine",
   "version": "1.0.0",
   "description": "A simple, extensible template engine for Node.js in 100 lines (or less)",
-  "main": "index.js",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +18,6 @@
   },
   "homepage": "https://github.com/McDuckes/node-template-engine#readme",
   "devDependencies": {
-    "@types/node": "^18.7.6"
+    "@types/node": "^18.14.2"
   }
 }
