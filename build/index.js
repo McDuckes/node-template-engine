@@ -63,7 +63,7 @@ class Templater {
         const chunks = [];
         while (true) {
             //Expand here with your custom tags
-            let result = /{{(.*?)}}/g.exec(templateString);
+            let result = /{{(.*?)}}|{!(.*?)!}/g.exec(templateString);
             if (!result)
                 break;
             if (result.index !== 0) {
@@ -77,7 +77,7 @@ class Templater {
         return chunks;
     }
     /**
-     * The string array from the parsed function will be concat in a way that allows interpolation where the {{.*?}} matched
+     * The string array from the parsed function will be concat in a way that allows interpolation where the parse function matched
      * A function will be created from this that takes in a data argument with which data can be passed to the template
      * @param parsed
      * @returns
@@ -86,8 +86,11 @@ class Templater {
         let renderFunction = `""`;
         //Expand here with your custom tags
         parsed.map(t => {
-            if (t.startsWith("{{") && t.endsWith("}}")) {
+            if (t.startsWith("{!") && t.endsWith("!}")) {
                 renderFunction += `+${t.substring(2, t.length - 2)}`;
+            }
+            else if (t.startsWith("{{") && t.endsWith("}}")) {
+                renderFunction += `+${Templater.escapeForHtml(t.substring(2, t.length - 2))}`;
             }
             else {
                 renderFunction += `+\`${t}\``;
@@ -110,6 +113,14 @@ class Templater {
         return hash;
     }
     ;
+    static escapeForHtml(input) {
+        return input
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 }
 exports.default = Templater;
 Templater.hashes = {};

@@ -18,7 +18,7 @@ export default class Templater {
      */
     private static parse;
     /**
-     * The string array from the parsed function will be concat in a way that allows interpolation where the {{.*?}} matched
+     * The string array from the parsed function will be concat in a way that allows interpolation where the parse function matched
      * A function will be created from this that takes in a data argument with which data can be passed to the template
      * @param parsed
      * @returns
@@ -30,6 +30,7 @@ export default class Templater {
      * @returns
      */
     static hash(str: string): number;
+    static escapeForHtml(input: string): string;
 }
 interface Dictionary<T> {
     [Key: string]: T;
