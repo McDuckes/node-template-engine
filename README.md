@@ -12,6 +12,8 @@ Add tag to your html
 ```javascript
 <button>{{data.buttonText}}</button>
 ```
+Use {{ and }} for a string escaped for HTML
+Use {! and !} for an unescaped string that may contain HTML characters
 
 Render the template as a response
 ```javascript
@@ -23,12 +25,12 @@ response.end(await Templater.render('homepage.html',{buttonText:'This text will 
 
 Add your own tags to the regex in the parse function
 ```javascript
-/{{(.*?)}}|/
+/{{(.*?)}}|{!(.*?)!}/
 ```
 
 like so
 ```javascript
-/{{(.*?)}}|YOURTAG(.*?)YOURTAG/g
+/{{(.*?)}}|{!(.*?)!}|YOURTAG(.*?)YOURTAG/g
 ```
 
 And then add the handling of the tag to the compile function:

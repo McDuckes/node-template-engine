@@ -40,7 +40,7 @@ export default class Templater {
 
         while (true) {
             //Expand here with your custom tags
-            let result = /{{(.*?)}}/g.exec(templateString);
+            let result = /{{(.*?)}}|{!(.*?)!}/g.exec(templateString);
             if (!result) break;
 
             if (result.index !== 0) {
@@ -57,7 +57,7 @@ export default class Templater {
     }
 
     /**
-     * The string array from the parsed function will be concat in a way that allows interpolation where the {{.*?}} matched
+     * The string array from the parsed function will be concat in a way that allows interpolation where the parse function matched
      * A function will be created from this that takes in a data argument with which data can be passed to the template
      * @param parsed 
      * @returns 
@@ -67,8 +67,10 @@ export default class Templater {
 
         //Expand here with your custom tags
         parsed.map(t => {
-            if (t.startsWith("{{") && t.endsWith("}}")) {
+            if (t.startsWith("{!") && t.endsWith("!}")) {
                 renderFunction += `+${t.substring(2, t.length - 2)}`;
+            } else if (t.startsWith("{{") && t.endsWith("}}")) {
+                renderFunction += `+${Templater.escapeForHtml(t.substring(2, t.length - 2))}`;
             } else {
                 renderFunction += `+\`${t}\``;
             }
@@ -91,6 +93,15 @@ export default class Templater {
         }
         return hash;
     };
+
+    public static escapeForHtml(input: string) {
+        return input
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 }
 
 class CachedTemplate {
