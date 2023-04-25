@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs/promises"));
 class Templater {
@@ -45,22 +36,20 @@ class Templater {
      * @param cacheReload time in ms until file hash will be checked again, defaults to 10000 ms
      * @returns
      */
-    static render(templateName, data, cacheReload = 10000) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let time = this.times[templateName];
-            let cached = this.hashes[templateName];
-            if (time && time < Date.now() || !cached) {
-                let templateString = (yield fs.readFile(this.templateFolder + templateName)).toString();
-                let hash = this.hash(templateString).toString();
-                if (cached === undefined || cached.hash !== hash) {
-                    let chunks = this.parse(templateString);
-                    let fn = this.compile(chunks);
-                    cached = this.hashes[templateName] = new CachedTemplate(hash, fn);
-                }
-                this.times[templateName] = Date.now() + cacheReload;
+    static async render(templateName, data, cacheReload = 10000) {
+        let time = this.times[templateName];
+        let cached = this.hashes[templateName];
+        if (time && time < Date.now() || !cached) {
+            let templateString = (await fs.readFile(this.templateFolder + templateName)).toString();
+            let hash = this.hash(templateString).toString();
+            if (cached === undefined || cached.hash !== hash) {
+                let chunks = this.parse(templateString);
+                let fn = this.compile(chunks);
+                cached = this.hashes[templateName] = new CachedTemplate(hash, fn);
             }
-            return cached.fn(data);
-        });
+            this.times[templateName] = Date.now() + cacheReload;
+        }
+        return cached.fn(data);
     }
     /**
      * This function will check for expressions matching {{.*?}} regex which can hold expressions
