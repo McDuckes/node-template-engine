@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 export default class Templater {
 
     private static hashes: Dictionary<CachedTemplate> = {};
+    private static times: Dictionary<number> = {};
     private static templateFolder: string = './';
 
     public static setTemplateFolder(name: string) {
@@ -14,18 +15,26 @@ export default class Templater {
      * Otherwise it will compile and cache the template
      * @param templateName 
      * @param data 
+     * @param cacheReload time in ms until file hash will be checked again, defaults to 10000 ms
      * @returns 
      */
-    public static async render(templateName: string, data: Dictionary<any>) {
-        let templateString = (await fs.readFile(this.templateFolder + templateName)).toString();
-        let hash = this.hash(templateString).toString();
+    public static async render(templateName: string, data: Dictionary<any>, cacheReload = 10000) {
+        let time = this.times[templateName];
         let cached = this.hashes[templateName];
 
-        if (cached === undefined || cached.hash !== hash) {
-            let chunks = this.parse(templateString);
-            let fn = this.compile(chunks);
-            cached = this.hashes[templateName] = new CachedTemplate(hash, fn);
+        if (time && time < Date.now() || !cached) {
+            let templateString = (await fs.readFile(this.templateFolder + templateName)).toString();
+            let hash = this.hash(templateString).toString();
+
+            if (cached === undefined || cached.hash !== hash) {
+                let chunks = this.parse(templateString);
+                let fn = this.compile(chunks);
+                cached = this.hashes[templateName] = new CachedTemplate(hash, fn);
+            }
+
+            this.times[templateName] = Date.now() + cacheReload;
         }
+
         return cached.fn(data);
     }
 

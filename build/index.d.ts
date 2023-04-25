@@ -1,5 +1,6 @@
 export default class Templater {
     private static hashes;
+    private static times;
     private static templateFolder;
     static setTemplateFolder(name: string): void;
     /**
@@ -7,9 +8,10 @@ export default class Templater {
      * Otherwise it will compile and cache the template
      * @param templateName
      * @param data
+     * @param cacheReload time in ms until file hash will be checked again, defaults to 10000 ms
      * @returns
      */
-    static render(templateName: string, data: Dictionary<any>): Promise<any>;
+    static render(templateName: string, data: Dictionary<any>, cacheReload?: number): Promise<any>;
     /**
      * This function will check for expressions matching {{.*?}} regex which can hold expressions
      *  and isolate them and the surrounding strings into a string array

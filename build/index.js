@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -38,17 +42,22 @@ class Templater {
      * Otherwise it will compile and cache the template
      * @param templateName
      * @param data
+     * @param cacheReload time in ms until file hash will be checked again, defaults to 10000 ms
      * @returns
      */
-    static render(templateName, data) {
+    static render(templateName, data, cacheReload = 10000) {
         return __awaiter(this, void 0, void 0, function* () {
-            let templateString = (yield fs.readFile(this.templateFolder + templateName)).toString();
-            let hash = this.hash(templateString).toString();
+            let time = this.times[templateName];
             let cached = this.hashes[templateName];
-            if (cached === undefined || cached.hash !== hash) {
-                let chunks = this.parse(templateString);
-                let fn = this.compile(chunks);
-                cached = this.hashes[templateName] = new CachedTemplate(hash, fn);
+            if (time && time < Date.now() || !cached) {
+                let templateString = (yield fs.readFile(this.templateFolder + templateName)).toString();
+                let hash = this.hash(templateString).toString();
+                if (cached === undefined || cached.hash !== hash) {
+                    let chunks = this.parse(templateString);
+                    let fn = this.compile(chunks);
+                    cached = this.hashes[templateName] = new CachedTemplate(hash, fn);
+                }
+                this.times[templateName] = Date.now() + cacheReload;
             }
             return cached.fn(data);
         });
@@ -122,9 +131,10 @@ class Templater {
             .replace(/'/g, "&#039;");
     }
 }
-exports.default = Templater;
 Templater.hashes = {};
+Templater.times = {};
 Templater.templateFolder = './';
+exports.default = Templater;
 class CachedTemplate {
     constructor(hash, fn) {
         this.hash = hash;
