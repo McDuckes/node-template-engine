@@ -24,6 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs/promises"));
+const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 class Templater {
     static setTemplateFolder(name) {
         this.templateFolder = name;
@@ -49,7 +50,7 @@ class Templater {
             }
             this.times[templateName] = Date.now() + cacheReload;
         }
-        return cached.fn(data, $include);
+        return await cached.fn(data, $include);
     }
     /**
      * This function will check for expressions matching {{.*?}} regex which can hold expressions
@@ -94,7 +95,7 @@ class Templater {
                 renderFunction += `+\`${t}\``;
             }
         });
-        return new Function('data', '$include', "return " + renderFunction);
+        return new AsyncFunction('data', '$include', "return " + renderFunction);
     }
     /**
      * A very simple but fast hash function returning a 32 bit integer

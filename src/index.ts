@@ -1,5 +1,7 @@
 import * as fs from 'fs/promises';
 
+const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+
 export default class Templater {
 
     private static hashes: Dictionary<CachedTemplate> = {};
@@ -35,7 +37,7 @@ export default class Templater {
             this.times[templateName] = Date.now() + cacheReload;
         }
 
-        return cached.fn(data, $include);
+        return await cached.fn(data, $include);
     }
 
     /**
@@ -85,7 +87,7 @@ export default class Templater {
             }
         });
 
-        return new Function('data', '$include', "return " + renderFunction);
+        return new AsyncFunction('data', '$include', "return " + renderFunction);
     }
 
     /**
