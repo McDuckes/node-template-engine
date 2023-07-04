@@ -35,7 +35,7 @@ export default class Templater {
             this.times[templateName] = Date.now() + cacheReload;
         }
 
-        return cached.fn(data);
+        return cached.fn(data, $include);
     }
 
     /**
@@ -85,7 +85,7 @@ export default class Templater {
             }
         });
 
-        return new Function('data', "return " + renderFunction);
+        return new Function('data', '$include', "return " + renderFunction);
     }
 
     /**
@@ -122,4 +122,8 @@ class CachedTemplate {
 
 interface Dictionary<T> {
     [Key: string]: T;
+}
+
+function $include(templateName: string, data: Dictionary<any>) {
+    return Templater.render(templateName, data);
 }

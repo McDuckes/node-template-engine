@@ -49,7 +49,7 @@ class Templater {
             }
             this.times[templateName] = Date.now() + cacheReload;
         }
-        return cached.fn(data);
+        return cached.fn(data, $include);
     }
     /**
      * This function will check for expressions matching {{.*?}} regex which can hold expressions
@@ -94,7 +94,7 @@ class Templater {
                 renderFunction += `+\`${t}\``;
             }
         });
-        return new Function('data', "return " + renderFunction);
+        return new Function('data', '$include', "return " + renderFunction);
     }
     /**
      * A very simple but fast hash function returning a 32 bit integer
@@ -129,4 +129,7 @@ class CachedTemplate {
         this.hash = hash;
         this.fn = fn;
     }
+}
+function $include(templateName, data) {
+    return Templater.render(templateName, data);
 }
